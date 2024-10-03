@@ -22,7 +22,7 @@ while (isruning)
         int temptid;
         int tempUnits;
         Console.Clear();
-        Console.WriteLine("Ny utryckning asdf eller [A] för att avsluta");
+        Console.WriteLine("Ny utryckning asdfasfd eller [A] för att avsluta");
         Console.Write("Typ av utryckning: ");
         break;
 
