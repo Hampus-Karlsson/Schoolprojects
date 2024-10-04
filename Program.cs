@@ -1,19 +1,16 @@
 ﻿using System.Collections;
 using System.Diagnostics.Contracts;
 using System.Runtime.InteropServices;
-
 bool isruning =true;
 List<Unit> units= new ();
 List<Repport> repports=new();
 List<Call> calls=new();
-
 while (isruning)
 {
     Console.WriteLine("----------------------Polisens Rapportsystem 80-----------------------");
     Console.WriteLine("Välj ett av följande:");
     Console.WriteLine("[R]egistrera ny Utryckning\n[N]y rapport\n[P]ersonal\n[I]nformationssammanställning\n[A]vsluta");
     string svar = Console.ReadLine();
-
     switch (svar)
     {
         case "r"://Registrera
@@ -25,7 +22,6 @@ while (isruning)
         Console.Clear();
         while(go)
             {
-                
                 Console.WriteLine("Ny utryckning eller [A] för att avsluta");
                 Console.Write("Typ av utryckning: ");
                 Console.WriteLine();
@@ -49,11 +45,9 @@ while (isruning)
                 Console.WriteLine($" {temptyp}, {tempplats}, {temptid}, {tempUnits}");
                 Call newCalls =new Call (temptyp,tempplats,temptid,tempUnits);
                 calls.Add(newCalls);
-                Console.ReadLine();
-                
+                Console.ReadLine();  
             }
         break;
-
         case "n"://ny rapport
         Console.Clear();
         string tempstation;
@@ -72,7 +66,6 @@ while (isruning)
                 tempnr=int.Parse(Console.ReadLine());
                 Console.WriteLine("datum: ");
                 tempdate=int.Parse(Console.ReadLine());
-
                 Repport newRepport = new Repport(tempstation,tempdesc,tempnr,tempdate);
                 repports.Add(newRepport);
                 if (tempstation =="A" || tempdesc =="A")
@@ -81,7 +74,6 @@ while (isruning)
                 }
             }   
         break;
-
         case "p"://personal
         Console.Clear();
         Console.WriteLine("[R]egistrera ny personal\n[V]isa enheter\n[T]illbaka");
@@ -91,7 +83,6 @@ while (isruning)
                 bool run=true;
                 while(run)
                 {
-                    
                     string temp;
                     int nr;
                     Console.WriteLine("Lägg till enhet eller tryck [A]vbryt för att gå tillbaka till menyn");
@@ -99,9 +90,7 @@ while (isruning)
                     temp =Console.ReadLine();
                   if(temp=="a")
                     {
-                     
-                      run=false;
-                    
+                      run=false;       
                     }
                   else
                     {
@@ -113,19 +102,13 @@ while (isruning)
                     }
                 }
             }
-                
-            
             else if (svar=="v")
             {
                 units.Sort((x, y) => x.Namn.CompareTo(y.Namn));
-
                 foreach(Unit i in units)
                 {
-                
                 //printa sorterad lista
-                i.Print();
-                
-                
+                i.Print();  
                 continue;
                 }
             }
@@ -134,7 +117,6 @@ while (isruning)
                 continue;
             }
         break;
-
         case "i"://infosamman
         Console.Clear();
         Console.WriteLine("[U]ttryckningar\n[P]ersonal\n[R]apporter");
@@ -165,13 +147,10 @@ while (isruning)
                 //Lista alla rapporter
             }
         break;
-
         case "a"://avsluta
         isruning=false;
-        break;
-        
+        break;   
     }
-
 }
 public class Repport
 {
@@ -195,29 +174,22 @@ public class Unit
 {
  public string Namn;
  public int Tjänstenummer;
-
     public Unit(string namn,int tjänstenummer)
     {
         this.Namn=namn;
         this.Tjänstenummer=tjänstenummer;
     }
-     
-
     public void Print()
     {
-        
         Console.WriteLine($"Namn:{Namn}, Tjänstenummer:{Tjänstenummer}");
     }   
-
 }
-
 public class Call   
 {
     public string Typ;
     public string Plats;
     public int Tid;
     public int Units;
-
         public Call(string typ,string plats, int tid, int units)
         {
             this.Typ=typ;
