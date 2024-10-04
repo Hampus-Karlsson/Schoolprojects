@@ -21,9 +21,37 @@ while (isruning)
         string tempplats;
         int temptid;
         int tempUnits;
+        bool go=true;
         Console.Clear();
-        Console.WriteLine("Ny utryckning asdfasfd eller [A] för att avsluta");
-        Console.Write("Typ av utryckning: ");
+        while(go)
+            {
+                
+                Console.WriteLine("Ny utryckning eller [A] för att avsluta");
+                Console.Write("Typ av utryckning: ");
+                Console.WriteLine();
+                temptyp=Console.ReadLine();
+                 if (temptyp=="a")
+                {
+                    go=false;
+                }
+                Console.Write("Plats:");
+                tempplats=Console.ReadLine();
+                if (tempplats=="a")
+                {   
+                    go=false;
+                }
+                Console.WriteLine();
+                Console.Write("Agne tid i militär tids format:");
+                temptid=int.Parse(Console.ReadLine());
+                Console.WriteLine();
+                Console.Write("Aktiva enheter:");
+                tempUnits=int.Parse(Console.ReadLine());
+                Console.WriteLine($" {temptyp}, {tempplats}, {temptid}, {tempUnits}");
+                Call newCalls =new Call (temptyp,tempplats,temptid,tempUnits);
+                calls.Add(newCalls);
+                Console.ReadLine();
+                
+            }
         break;
 
         case "n"://ny rapport
@@ -113,6 +141,10 @@ while (isruning)
         svar=Console.ReadLine();
             if (svar=="u")
             {
+                foreach(Call i in calls)
+                {
+                    i.Print();
+                }
                 //lista alla uttryckningar
             }
             else if (svar=="p")
@@ -126,6 +158,10 @@ while (isruning)
             }
             else if (svar=="r")
             {
+                foreach(Repport i in repports)
+                {
+                    i.Print();
+                }
                 //Lista alla rapporter
             }
         break;
@@ -142,13 +178,17 @@ public class Repport
     public string Station;
     public string Desc;
     public int Repnr;
-    public int date;
+    public int Date;
         public Repport(string station, string desc, int repnr, int date)
         {
             this.Station=station;
             this.Desc=desc;
             this.Repnr=repnr;
-            this.date=date;
+            this.Date=date;
+        }
+        public void Print()
+        {
+            Console.WriteLine($"Station:{Station}\nBeskrivning:{Desc}\nRapportnummer:{Repnr}\nDatum:{Date}");
         }
 }
 public class Unit
@@ -184,5 +224,9 @@ public class Call
             this.Plats=plats;
             this.Tid=tid;
             this.Units=units;
+        }
+        public void Print()
+        {
+            Console.WriteLine($"Typ av utryckning:{Typ}\nPlats:{Plats}\nTid:{Tid}\nEnhter:{Units}");
         }
 }
