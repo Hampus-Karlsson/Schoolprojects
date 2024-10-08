@@ -1,10 +1,34 @@
 ﻿using System.Collections;
 using System.Diagnostics.Contracts;
 using System.Runtime.InteropServices;
+using System.Text.Json;
 bool isruning =true;
 List<Unit> units= new ();
 List<Repport> repports=new();
 List<Call> calls=new();
+void SaveData()
+{
+    File.WriteAllText("Calls.json",JsonSerializer.Serialize(calls));
+    File.WriteAllText("repports.json", JsonSerializer.Serialize(repports));
+    File.WriteAllText("units.json", JsonSerializer.Serialize(units));
+}
+void LoadData()
+{
+    if (File.Exists("calls.json"))
+    {
+        calls= JsonSerializer.Deserialize<List<Call>>(File.ReadAllText("calls.json"));
+    }
+    if (File.Exists("repports.json"))
+    {   
+        repports = JsonSerializer.Deserialize<List<Repport>>(File.ReadAllText("repports.json"));
+    }
+    if (File.Exists("units.json"))
+    {
+        units = JsonSerializer.Deserialize<List<Unit>>(File.ReadAllText("units.json"));
+    }
+    
+}
+LoadData();
 while (isruning)
 {
     Console.WriteLine("----------------------Polisens Rapportsystem 80-----------------------");
@@ -149,6 +173,7 @@ while (isruning)
         break;
         case "a"://avsluta
         isruning=false;
+        SaveData();
         break;   
     }
 }
@@ -186,7 +211,7 @@ public class Unit
 }
 public class Call   
 {
-    public string Typ;
+    public string Typ;//public eller private?
     public string Plats;
     public int Tid;
     public int Units;
