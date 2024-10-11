@@ -2,128 +2,158 @@
 using System.Diagnostics.Contracts;
 using System.Runtime.InteropServices;
 using System.Text.Json;
+using System.IO;
 bool isruning =true;
 List<Unit> units= new ();
 List<Repport> repports=new();
 List<Call> calls=new();
-void SaveData()
-{
-    File.WriteAllText("Calls.json",JsonSerializer.Serialize(calls));
-    File.WriteAllText("repports.json", JsonSerializer.Serialize(repports));
-    File.WriteAllText("units.json", JsonSerializer.Serialize(units));
-}
-void LoadData()
-{
-    if (File.Exists("calls.json"))
-    {
-        calls= JsonSerializer.Deserialize<List<Call>>(File.ReadAllText("calls.json"));
-    }
-    if (File.Exists("repports.json"))
-    {   
-        repports = JsonSerializer.Deserialize<List<Repport>>(File.ReadAllText("repports.json"));
-    }
-    if (File.Exists("units.json"))
-    {
-        units = JsonSerializer.Deserialize<List<Unit>>(File.ReadAllText("units.json"));
-    }
-    
-}
-LoadData();
 while (isruning)
 {
     Console.WriteLine("----------------------Polisens Rapportsystem 80-----------------------");
     Console.WriteLine("Välj ett av följande:");
     Console.WriteLine("[R]egistrera ny Utryckning\n[N]y rapport\n[P]ersonal\n[I]nformationssammanställning\n[A]vsluta");
-    string svar = Console.ReadLine();
-    switch (svar)
+    string? svar = Console.ReadLine();
+    if(string.IsNullOrWhiteSpace(svar))
+    {
+        Console.WriteLine("Felakting inmatning, försök igen");
+        continue;
+    }
+    switch (svar.ToLower())
     {
         case "r"://Registrera
-        string temptyp;
-        string tempplats;
+        string? temptyp;
+        string? tempplats;
         int temptid;
         int tempUnits;
-        bool go=true;
         Console.Clear();
-        while(go)
+        while(true)
+        {
+            Console.WriteLine("Ny utryckning eller [A] för att avsluta");
+            Console.Write("Typ av utryckning: ");
+            Console.WriteLine();
+            temptyp=Console.ReadLine();
+            if(string.IsNullOrWhiteSpace(temptyp))
             {
-                Console.WriteLine("Ny utryckning eller [A] för att avsluta");
-                Console.Write("Typ av utryckning: ");
-                Console.WriteLine();
-                temptyp=Console.ReadLine();
-                 if (temptyp=="a")
-                {
-                    go=false;
-                }
-                Console.Write("Plats:");
-                tempplats=Console.ReadLine();
-                if (tempplats=="a")
-                {   
-                    go=false;
-                }
-                Console.WriteLine();
-                Console.Write("Agne tid i militär tids format:");
-                temptid=int.Parse(Console.ReadLine());
-                Console.WriteLine();
-                Console.Write("Aktiva enheter:");
-                tempUnits=int.Parse(Console.ReadLine());
-                Console.WriteLine($" {temptyp}, {tempplats}, {temptid}, {tempUnits}");
-                Call newCalls =new Call (temptyp,tempplats,temptid,tempUnits);
-                calls.Add(newCalls);
-                Console.ReadLine();  
+                Console.WriteLine("Felakting inmatning, försök igen");
+                continue;
             }
+            if (temptyp.Equals("A", StringComparison.OrdinalIgnoreCase))
+            {
+                
+                break;
+            }
+            Console.Write("Plats:");
+            tempplats =Console.ReadLine();
+            if (string.IsNullOrWhiteSpace(tempplats))//validering av inmatning
+            {
+                Console.WriteLine("Felakting inmatning, försök igen");
+                continue;
+            }
+            if (tempplats=="a")
+            {   
+                break;
+            }
+            Console.WriteLine();
+            Console.Write("Agne tid i militär tids format:");
+            if(!int.TryParse(Console.ReadLine(), out temptid) || temptid < 0 || temptid>2359)//validering av tid
+            {
+                Console.WriteLine("Felaktig inmatning, försök igen");
+            }
+            Console.WriteLine();
+            Console.Write("Aktiva enheter:");
+            if(!int.TryParse(Console.ReadLine(),out tempUnits)|| tempUnits<0)
+            {
+                Console.WriteLine("Felaktigt enhetsnummer, försök igen.");
+                continue;
+            }
+            Console.WriteLine($" Uttryckning registrerad: {temptyp}, {tempplats}, {temptid}, {tempUnits}");
+            Call newCalls =new Call (temptyp,tempplats,temptid,tempUnits);
+            calls.Add(newCalls);
+            Console.ReadLine();  
+        }
         break;
         case "n"://ny rapport
         Console.Clear();
-        string tempstation;
-        string tempdesc;
+        string? tempstation;
+        string? tempdesc;
         int tempnr;
         int tempdate;
-        bool runing=true;
-        while (runing)
+        while (true)
             {
                 Console.WriteLine("Skapa ny rapport eller skriv bara [A] för att avsluta");
                 Console.Write("Sation: ");
                 tempstation=Console.ReadLine();
+                if (string.IsNullOrWhiteSpace(tempstation))
+                {
+                 Console.WriteLine("Inmatningen kan inte vara tom. Försök igen.");
+                continue;
+                }
+                if (tempstation=="A"|| tempstation == "a")
+                {
+                    break;
+                }
                 Console.WriteLine("Beskrivning: ");
                 tempdesc=Console.ReadLine();
+                if (string.IsNullOrWhiteSpace(tempdesc))
+                {
+                    Console.WriteLine("Inmatningen kan inte vara tom. Försök igen.");
+                    continue;
+                }
+                if (tempdesc =="A" || tempdesc =="a")
+                {
+                    break;
+                }
                 Console.WriteLine("Rapportnummer: ");
-                tempnr=int.Parse(Console.ReadLine());
-                Console.WriteLine("datum: ");
-                tempdate=int.Parse(Console.ReadLine());
+                if(!int.TryParse(Console.ReadLine(), out tempnr) || tempnr<0)
+                {
+                    Console.WriteLine("Felaktigt rapportnummer,försök igen.");
+                    continue;
+                }
+                Console.WriteLine("datum (ÅÅÅMMDD): ");
+                if(!int.TryParse(Console.ReadLine(),out tempdate)|| tempdate<0)
+                {   
+                    Console.WriteLine("Felaktigt datum, försök igen");
+                    continue;
+                }
                 Repport newRepport = new Repport(tempstation,tempdesc,tempnr,tempdate);
                 repports.Add(newRepport);
-                if (tempstation =="A" || tempdesc =="A")
-                {
-                    runing=false;
-                }
+                System.Console.WriteLine("Ny Rapport tillagd.");
             }   
         break;
         case "p"://personal
-        Console.Clear();
-        Console.WriteLine("[R]egistrera ny personal\n[V]isa enheter\n[T]illbaka");
-        svar=Console.ReadLine();
+         Console.Clear();
+         Console.WriteLine("[R]egistrera ny personal\n[V]isa enheter\n[T]illbaka");
+         svar=Console.ReadLine();
             if (svar=="r")
             {    
-                bool run=true;
-                while(run)
+                while(true)
                 {
-                    string temp;
+                    string? temp;
                     int nr;
                     Console.WriteLine("Lägg till enhet eller tryck [A]vbryt för att gå tillbaka till menyn");
                     Console.WriteLine("Agne namn");
                     temp =Console.ReadLine();
-                  if(temp=="a")
+                    if (string.IsNullOrWhiteSpace(temp))
                     {
-                      run=false;       
+                        Console.WriteLine("Inmatningen kan inte vara tom. Försök igen.");
+                        continue;
                     }
-                  else
+                    if(temp=="a")
                     {
-                        Console.WriteLine("Ange tjänstnummer");
-                        nr =int.Parse(Console.ReadLine());
+                      break;       
+                    }
+                        Console.WriteLine("Ange tjänstnummer eller [0] för att avbryta");
+                    if(!int.TryParse(Console.ReadLine(), out nr) || nr <0)
+                    {
+                        Console.WriteLine("Felaktigt tjänstnummer, försök igen.");
+                    }
+                    if (nr==0)
+                    {
+                        break;
+                    }
                         Unit newUnit=new Unit(temp,nr);
                         units.Add(newUnit);
                         Console.WriteLine("Enhet tillagd.");
-                    }
                 }
             }
             else if (svar=="v")
@@ -171,18 +201,22 @@ while (isruning)
                 //Lista alla rapporter
             }
         break;
-        case "a"://avsluta
-        isruning=false;
-        SaveData();
-        break;   
+            case "a"://avsluta
+            isruning=false;
+            break; 
+
+        default:
+        Console.WriteLine("Ogiltigt val, försök igen");
+        break;
+
     }
 }
 public class Repport
 {
-    public string Station;
-    public string Desc;
-    public int Repnr;
-    public int Date;
+    private string Station;
+    private string Desc;
+    private int Repnr;
+    private int Date;
         public Repport(string station, string desc, int repnr, int date)
         {
             this.Station=station;
@@ -211,10 +245,10 @@ public class Unit
 }
 public class Call   
 {
-    public string Typ;//public eller private?
-    public string Plats;
-    public int Tid;
-    public int Units;
+    private string Typ;
+    private string Plats;
+    private int Tid;
+    private int Units;
         public Call(string typ,string plats, int tid, int units)
         {
             this.Typ=typ;
